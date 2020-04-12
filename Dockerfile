@@ -9,10 +9,6 @@ ENV MAILPILE_TOR "/usr/bin/tor"
 ENV MAILPILE_OPENSSL "/usr/bin/openssl"
 ENV MAILPILE_GNUPG "/usr/bin/gpg"
 
-# Add group and user
-RUN addgroup -g 1000 -S mailpile && \
-    adduser -u 1000 -S mailpile -G mailpile
-
 # Install requirements
 RUN apk add --update-cache \
         ca-certificates \
@@ -46,9 +42,6 @@ WORKDIR /Mailpile
 
 # Install missing requirements
 RUN pip install -r requirements.txt
-
-# Run mailpile command as user mailpile
-USER mailpile
 
 # Initial Mailpile setup
 RUN ./mp setup
