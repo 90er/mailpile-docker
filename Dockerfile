@@ -9,24 +9,28 @@ ENV MAILPILE_TOR "/usr/bin/tor"
 ENV MAILPILE_OPENSSL "/usr/bin/openssl"
 ENV MAILPILE_GNUPG "/usr/bin/gpg"
 
+# Add group and user
+RUN addgroup -g 1000 -S mailpile && \
+    adduser -u 1000 -S mailpile -G mailpile
+
 # Install requirements
 RUN apk add --update-cache \
+        ca-certificates \
         git \
-        tor \
-        zlib \
         gnupg \
         gnupg1 \
-        py2-pip \
         openssl \
+        py-cffi \
+        py-cryptography \
         py-jinja2 \
         py-libxml2 \
         py-libxslt \
         py-lxml \
         py-pbr \
         py-pillow \
-        py-cffi \
-        py-cryptography \
-        ca-certificates
+        py-pip \
+        tor \
+        zlib
 
 # Mailpile read timezone from server, so in docker-compose you can change TZ
 RUN apk add --no-cache tzdata
@@ -42,6 +46,9 @@ WORKDIR /Mailpile
 
 # Install missing requirements
 RUN pip install -r requirements.txt
+
+# Run mailpile command as user mailpile
+USER mailpile
 
 # Initial Mailpile setup
 RUN ./mp setup
